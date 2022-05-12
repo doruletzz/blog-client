@@ -1,41 +1,70 @@
 import { ChangeEvent, useState } from 'react'
 
 import { Form, Button } from 'react-bootstrap';
+import { usePostDispatch } from '../redux/app/hooks';
+import { savePost } from '../redux/blog/slice';
 import { Post } from '../redux/blog/types/post';
+
 
 const PostAddForm = () => {
 
+    // const readFile = async (file: File, content: string) => {
+    //     let reader = new FileReader();
+
+    //     reader.onload =  (e: Event) => {
+    //         if(reader.result !== null)
+    //             content = content.concat(reader.result.toString());
+    //             reader.readAsText(file);
+
+    //         // console.log(reader.result, content);
+    //     };
+
+    //     reader.readAsText(file);
+
+    //     console.log(await content);
+    // }
+
+    const dispatch = usePostDispatch();
     const [validated, setValidated] = useState(false);
 
-    const handleSubmit = (event: any) => {
+    const handleSubmit = async (event: any) => {
+        event.preventDefault();
+
         const form = event.currentTarget;
+
+        console.log(form);
+
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
+            // return;
         }
 
         const title = form.elements.title.value as string;
         const slug = form.elements.slug.value as string;
         const summary = form.elements.summary.value as string;
-        const imageURL = form.elements.imageURL.value as string;
-        const contentFile = form.elements.content.value as string;
+        const imageURL = form.elements.imageUrl.value as string | undefined;
+        const contentFile = form.elements.content.files[0] as File;
 
-        const post = { 
-            id: -1, 
-            title: title, 
-            slug: slug, 
-            summary: summary, 
-            user: "dorletz", 
-            imageUrl: imageURL, 
-            content: contentFile 
+        let content = contentFile.text();
+
+        console.log(await content);
+        // readFile(contentFile, content);
+
+        const post = {
+            title: title,
+            slug: slug,
+            summary: summary,
+            user: "dorletz",
+            imageUrl: imageURL ? imageURL : null,
+            content: await content
         } as Post;
 
-        console.log(post);
-
         setValidated(true);
-
+        dispatch(savePost(post));
 
     };
+
 
     return (
         <>
@@ -58,8 +87,8 @@ const PostAddForm = () => {
                         <Form.Control type="text" placeholder="url to cover image" />
                     </Form.FloatingLabel>
 
-                    <Form.Group className="mb-5">
-                        <Form.Label controlId="content">Content (markdown file)</Form.Label>
+                    <Form.Group controlId="content" className="mb-5">
+                        <Form.Label>Content (markdown file)</Form.Label>
                         <Form.Control required type="file" />
                     </Form.Group>
                 </Form.Group>

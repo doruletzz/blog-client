@@ -20,9 +20,9 @@ export interface Post {
     slug : string,
     title: string,
     summary: string,
-    content: string,
+    content: string | undefined,
     user: string,
-    imageUrl: string,
+    imageUrl: string | undefined,
     createdAt?: Date | undefined,
     updatedAt?: Date | undefined,
 }

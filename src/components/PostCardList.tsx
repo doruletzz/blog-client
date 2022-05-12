@@ -31,14 +31,15 @@ const PostCardList = ({ count }: PostCardListParamType) => {
                         </Link>
                 </Row>
             ))}
+            <Button onClick={() => dispatch(fetchPosts(10))} >get all</Button>
 
-            {!isFetching && <Waypoint onEnter={() => dispatch(fetchPosts(2))} />}
+            {/* {!isFetching && <Waypoint onEnter={() => dispatch(fetchPosts(10))} />}
 
                 <Row className="text-center pt-2">
                     <div className="text-center">
                         <Spinner animation="border" />
                     </div>
-                </Row>
+                </Row> */}
         </Container>
     )
 }
