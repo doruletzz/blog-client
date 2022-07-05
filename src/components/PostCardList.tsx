@@ -1,47 +1,71 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { usePostDispatch, usePostSelector } from '../redux/app/hooks';
 
-import { Container, Button, Card, Row, Col, Spinner} from 'react-bootstrap'
+import {
+	Container,
+	Button,
+	Card,
+	Row,
+	Col,
+	Spinner,
+	Form,
+	FormCheck,
+	ToggleButton,
+} from 'react-bootstrap';
 
-
-import { fetchPosts } from '../redux/blog/slice';
+import { fetchPosts, removePost } from '../redux/blog/slice';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import PostCard from './PostCard';
 
 import { Waypoint } from 'react-waypoint';
+import { Tag } from '../redux/blog/types/post';
 
+const PostCardList = () => {
+	const navigate = useNavigate();
 
-type PostCardListParamType = {
-    count: number;
-}
+	const { posts, isFetching } = usePostSelector((state) => state.posts);
 
-const PostCardList = ({ count }: PostCardListParamType) => {
+	const dispatch = usePostDispatch();
 
-    const {posts, isFetching} = usePostSelector(state => state.posts);
+	useEffect(() => {
+		dispatch(fetchPosts(10));
+	}, []);
 
-    const dispatch = usePostDispatch();
+	return (
+		<Container fluid className='pt-2'>
+			{posts.map(({ id, title, summary, createdAt, slug, tags }, idx) => (
+				<Row key={idx} className='mt-4'>
+					<Col>
+						<PostCard
+							tags={tags}
+							slug={slug}
+							title={title}
+							createdAt={createdAt}
+							summary={summary}
+						/>
+					</Col>
+					<Col md={2}>
+						<Button onClick={() => dispatch(removePost(id))}>
+							❌
+						</Button>
+						<Button onClick={() => navigate(`/post/edit/${id}`)}>
+							⚙️
+						</Button>
+					</Col>
+				</Row>
+			))}
 
-    return (
-        <Container fluid className="pt-2">
-            {posts.map(({ title, summary, createdAt, slug }, idx) => (
-                <Row key={idx} className="mt-4">
-                        <Link to={`/blog/${slug}`}>
-                            <PostCard title={title} createdAt={createdAt} summary={summary} />
-                        </Link>
-                </Row>
-            ))}
-            <Button onClick={() => dispatch(fetchPosts(10))} >get all</Button>
-
-            {/* {!isFetching && <Waypoint onEnter={() => dispatch(fetchPosts(10))} />}
-
+			{/* {!isFetching && <Waypoint onEnter={() => dispatch(fetchPosts(10))} />} */}
+			{/*
                 <Row className="text-center pt-2">
                     <div className="text-center">
                         <Spinner animation="border" />
                     </div>
                 </Row> */}
-        </Container>
-    )
-}
+		</Container>
+	);
+};
 
-export default PostCardList
+export default PostCardList;
