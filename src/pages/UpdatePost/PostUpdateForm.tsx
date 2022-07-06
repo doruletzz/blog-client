@@ -4,10 +4,12 @@ import { Form, Button } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router';
 import { usePostDispatch, usePostSelector } from '../../redux/app/hooks';
-import { fetchPost, savePost } from '../../redux/blog/slice';
+import { fetchPost, savePost, updatePost } from '../../redux/blog/slice';
 import { Post, Tag } from '../../redux/blog/types/post';
 
 const PostUpdateForm = () => {
+	const navigate = useNavigate();
+
 	const dispatch = usePostDispatch();
 	const [validated, setValidated] = useState(false);
 
@@ -40,42 +42,42 @@ const PostUpdateForm = () => {
 
 		console.log(form);
 
-		// if (form.checkValidity() === false) {
-		// 	event.preventDefault();
-		// 	event.stopPropagation();
-		// 	return;
-		// }
+		if (!post || form.checkValidity() === false) {
+			event.preventDefault();
+			event.stopPropagation();
+			return;
+		}
 
-		// const title = form.title.value as string;
-		// const slug = form.slug.value as string;
-		// const summary = form.elements.summary.value as string;
-		// const imageURL = form.elements.imageUrl.value as string | undefined;
-		// const tagChecks = (
-		// 	Object.values(form.tag) as Array<HTMLInputElement>
-		// ).map((value: HTMLInputElement) => value.checked);
-		// const tags = Object.keys(Tag).filter(
-		// 	(key, idx) => tagChecks[idx]
-		// ) as Array<string>;
-		// const contentFile = form.elements.content.files[0] as File;
+		const title = form.title.value as string;
+		const slug = form.slug.value as string;
+		const summary = form.elements.summary.value as string;
+		const imageURL = form.elements.imageUrl.value as string | undefined;
+		const tagChecks = (
+			Object.values(form.tag) as Array<HTMLInputElement>
+		).map((value: HTMLInputElement) => value.checked);
+		const tags = Object.keys(Tag).filter(
+			(key, idx) => tagChecks[idx]
+		) as Array<string>;
+		const content = form.elements.content.value as string;
 
-		// let content = contentFile.text();
+		// readFile(contentFile, content);
 
-		// console.log(await content);
-		// // readFile(contentFile, content);
+		const newPost = {
+			id: post.id,
+			title: title,
+			slug: slug,
+			summary: summary,
+			user: 'dorletz',
+			imageUrl: imageURL ? imageURL : null,
+			createdAt: post.createdAt,
+			content: content,
+			tags,
+		} as Post;
 
-		// const post = {
-		// 	title: title,
-		// 	slug: slug,
-		// 	summary: summary,
-		// 	user: 'dorletz',
-		// 	imageUrl: imageURL ? imageURL : null,
-		// 	content: await content,
-		// 	tags,
-		// } as Post;
-
-		// setValidated(true);
-		// await dispatch(savePost(post));
-		// navigate('/');
+		setValidated(true);
+		console.log(newPost);
+		await dispatch(updatePost(post.id, newPost));
+		navigate('/');
 	};
 
 	return (

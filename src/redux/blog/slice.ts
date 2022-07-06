@@ -26,13 +26,17 @@ export const postSlice = createSlice({
 
 		postsReceived: (state, action: PayloadAction<Array<Post>>) => {
 			// add to payload without duplicates
-			state.posts = state.posts.concat(
-				action.payload.filter(
-					(i2) => !state.posts.find((i1) => i1.id == i2.id)
+			state.posts = action.payload.concat(
+				state.posts.filter(
+					(i2) => !action.payload.find((i1) => i1.id == i2.id)
 				)
 			);
 			state.isFetching = false;
 		},
+
+		// postUpdate: (state, action: PayloadAction<Post>) => {
+		// 	post = JSON.parse(JSON.stringify({ ...action.payload }));
+		// },
 
 		postsFailed: (state, action: PayloadAction<PostFetchError>) => {
 			state.error = action.payload;
@@ -51,8 +55,13 @@ export const postSlice = createSlice({
 
 const { actions, reducer } = postSlice;
 
-export const { postsReceived, postsFetching, postsFailed, postRemoved } =
-	actions;
+export const {
+	postsReceived,
+	postsFetching,
+	postsFailed,
+	postRemoved,
+	// postUpdate,
+} = actions;
 
 export default reducer;
 
@@ -113,11 +122,25 @@ export const fetchPost = (slugOrId: string): AppThunk => {
 					dispatch(postsReceived([data]));
 				})
 				.catch(function (error) {
-					console.log(error);
+					console.error(error);
 				});
 		} catch (error) {
 			dispatch(postsFailed(error));
 		}
+	};
+};
+
+export const updatePost = (id: number, post: Post): AppThunk => {
+	return async (dispatch) => {
+		axios
+			.put(SERVER_URL + id.toString(), post)
+			.then(({ data }) => {
+				console.log(data);
+				dispatch(postsReceived([data]));
+			})
+			.catch((error) => {
+				console.error(error);
+			});
 	};
 };
 
@@ -131,7 +154,7 @@ export const removePost = (slugOrId: string): AppThunk => {
 					dispatch(postRemoved(slugOrId));
 				})
 				.catch(function (error) {
-					console.log(error);
+					console.error(error);
 				});
 		} catch (error) {
 			dispatch(postsFailed(error));

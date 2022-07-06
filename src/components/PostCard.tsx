@@ -9,25 +9,44 @@ type PostCardType = {
 	summary: string;
 	tags: Array<Tag>;
 	createdAt: Date | undefined;
+	updatedAt: Date | undefined;
+	imageUrl?: string;
 };
 
-const PostCard = ({ title, summary, createdAt, slug, tags }: PostCardType) => {
-	console.log(tags);
+const PostCard = ({
+	title,
+	summary,
+	createdAt,
+	updatedAt,
+	slug,
+	tags,
+	imageUrl,
+}: PostCardType) => {
+	console.log(imageUrl);
 
 	return (
 		<Card>
 			<Card.Body>
-				<Card.Title as={Link} to={`/post/${slug}`}>
-					{title}
-				</Card.Title>
-				<Card.Subtitle>
-					{createdAt && createdAt.toString()}
-				</Card.Subtitle>
-				<Card.Text>
-					{summary}
-					<br />
-					{tags && tags.join(', ')}
-				</Card.Text>
+				<Row>
+					<Col md={2}>
+						{imageUrl && <Card.Img src={imageUrl} height='100%' />}
+					</Col>
+					<Col>
+						<Card.Title as={Link} to={`/post/${slug}`}>
+							{title}
+						</Card.Title>
+						<Card.Subtitle>
+							{`createdAt: ${createdAt && createdAt.toString()}`}
+							<br />
+							{`updatedAt: ${updatedAt && updatedAt.toString()}`}
+						</Card.Subtitle>
+						<Card.Text>
+							{`summary:  ${summary}`}
+							<br />
+							{`tags: ${tags && tags.join(', ')}`}
+						</Card.Text>
+					</Col>
+				</Row>
 			</Card.Body>
 		</Card>
 	);

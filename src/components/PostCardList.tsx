@@ -35,27 +35,45 @@ const PostCardList = () => {
 
 	return (
 		<Container fluid className='pt-2'>
-			{posts.map(({ id, title, summary, createdAt, slug, tags }, idx) => (
-				<Row key={idx} className='mt-4'>
-					<Col>
-						<PostCard
-							tags={tags}
-							slug={slug}
-							title={title}
-							createdAt={createdAt}
-							summary={summary}
-						/>
-					</Col>
-					<Col md={2}>
-						<Button onClick={() => dispatch(removePost(id))}>
-							❌
-						</Button>
-						<Button onClick={() => navigate(`/post/edit/${id}`)}>
-							⚙️
-						</Button>
-					</Col>
-				</Row>
-			))}
+			{posts.map(
+				(
+					{
+						id,
+						title,
+						summary,
+						createdAt,
+						updatedAt,
+						slug,
+						tags,
+						imageUrl,
+					},
+					idx
+				) => (
+					<Row key={idx} className='mt-4'>
+						<Col>
+							<PostCard
+								imageUrl={imageUrl}
+								tags={tags}
+								slug={slug}
+								title={title}
+								createdAt={createdAt}
+								updatedAt={updatedAt}
+								summary={summary}
+							/>
+						</Col>
+						<Col md={2}>
+							<Button onClick={() => dispatch(removePost(id))}>
+								❌
+							</Button>
+							<Button
+								onClick={() => navigate(`/post/edit/${id}`)}
+							>
+								⚙️
+							</Button>
+						</Col>
+					</Row>
+				)
+			)}
 
 			{/* {!isFetching && <Waypoint onEnter={() => dispatch(fetchPosts(10))} />} */}
 			{/*

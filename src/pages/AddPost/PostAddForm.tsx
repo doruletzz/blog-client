@@ -48,6 +48,8 @@ const PostAddForm = () => {
 			summary: summary,
 			user: 'dorletz',
 			imageUrl: imageURL ? imageURL : null,
+			createdAt: new Date(),
+			updatedAt: undefined,
 			content: await content,
 			tags,
 		} as Post;
